@@ -1,0 +1,408 @@
+html {
+    font-family: sans-serif;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 5%;
+    font-size: 0.9em;
+    background-color: #F7F7F7;
+}
+
+#loading {
+    background: url('../images/spinner.gif') no-repeat center center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 9999999;
+}
+
+/*nav section*/
+nav {
+    height: 5em;
+}
+
+#searchBar {
+    height: 0.9em;
+}
+
+#searchButton {
+    height: 3.09em;
+}
+
+#searchIcon {
+    height: 3em;
+    width: 3em;
+    display: inline-block;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+
+li:hover {
+    background-color: #111;
+}
+
+li.active {
+    background-color: #111;
+}
+
+nav input {
+    float:left;
+    display: block;
+    color:white;
+    background-color: #333;
+    padding: 14px 16px;
+}
+
+/*map section*/
+#map {
+    height: 40em;
+    width: 120em;
+    margin: 0 auto;
+}
+
+/*general info section */
+#cityNameTitle {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 1em;
+}
+
+#content {
+    display:flex;
+}
+
+
+#general-info, #weather, #currency {
+    width: 90em;
+    line-height: 2em;
+}
+
+#cityStats {
+ background-color: #f0f0f0;  
+ border: solid gray thin; 
+ padding: 0.7em;
+ margin-left: 1em;
+ height: 13em;
+}
+
+#cityStats th {
+    font-weight: bold;
+    color: #0645ad;
+}
+
+#cityStats td {
+    text-align: center;
+}
+
+#cityStats tr {
+    height: 2em;
+}
+
+/*weather section*/
+#weather p {
+    font-size: 1.3em;
+}
+
+#weather table {
+    margin-top: 4em;
+    border: solid gray thin;
+    background-color: #f0f0f0;
+}
+
+#weather table th {
+    font-size: 1.2em;
+    width: 7em;
+}
+
+#weather table td {
+    width: 10em;
+    font-size: 1.1em;
+    padding: 0.5em;
+}
+
+#weather table tr {
+    height: 3em;
+}
+
+#weatherIcon {
+    height: 6em;
+    width: 6em;
+}
+
+#temperature {
+    font-size: 2em;
+}
+
+.tableWeatherIcon {
+    height: 3em;
+    width: 3em;
+}
+
+.temperatureRow {
+    font-size: 1em;
+}
+
+/*currency section  */
+#currencyDiv {
+    background-color: #f0f0f0;
+    width: 60%;
+    height: 100%;
+    border: solid gray thin;
+    margin-top: 2em;
+}
+
+#currency table {
+    margin-top: 2em;
+    margin-left: 1em;
+    font-size: 1em;
+}
+
+#currency table tr {
+    height: 2.2em;
+}
+
+#currency table td {
+    width: 25em;
+}
+
+#currency table thead {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #0645ad;
+}
+
+#currency table input {
+    width: 15em;
+    font-size: 1.4em;
+    color: #ff9000;
+}
+
+/*mobile screen css*/
+@media only screen and (max-width: 320px) {
+    html {
+        margin-bottom: 1%;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+        width: 35em;
+    }
+
+    nav {
+        height: 4em;
+    }
+    
+    #searchBar {
+        width: 6em;
+        height: 0.8em;
+    }
+    
+    #searchButton {
+        height: 3.09em;
+    }
+
+    #map {
+        height: 30em;
+        width: 30em;
+        margin-left: 0em;
+        margin-right: 0em;
+    }
+
+    #content {
+        flex-wrap: wrap;
+    }
+
+    h2 {
+        width: 30em;
+    }
+
+    #general-info, #weather, #currency {
+        width: 27em;
+        line-height: 1.5em;
+    }
+
+    #currencyDiv {
+        width: 100%;
+    }
+
+    #cityStats {
+        margin-top: 3em;
+    }
+    
+    #currency table {
+        margin-top: 1em;
+        height: 12em;
+    }
+    
+    #currency table td {
+        width: 25em;
+    }
+    
+    
+    #currency table input {
+        width: 8em;
+    }
+    
+}
+
+@media only screen and (max-width: 425px) {
+    html {
+        margin-bottom: 1%;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+        width: 35em;
+    }
+
+    nav {
+        height: 4em;
+    }
+    
+    #searchBar {
+        width: 6em;
+        height: 0.8em;
+    }
+    
+    #searchButton {
+        height: 3.09em;
+    }
+
+    #map {
+        height: 30em;
+        width: 41em;
+        margin-left: 0em;
+        margin-right: 0em;
+    }
+
+    #content {
+        flex-wrap: wrap;
+    }
+
+    h2 {
+        width: 33em;
+    }
+
+    #general-info, #weather, #currency {
+        width: 33em;
+        line-height: 1.5em;
+    }
+
+    #currencyDiv {
+        width: 100%;
+    }
+
+    #cityStats {
+        margin-top: 3em;
+    }
+    
+    #currency table {
+        margin-top: 1em;
+        height: 12em;
+        width: 30em;
+    }
+    
+    #currency table td {
+        width: 25em;
+    }
+    
+    
+    #currency table input {
+        width: 8em;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    html {
+        margin-bottom: 5%;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+        width: 52em;
+    }
+
+    nav {
+        height: 4em;
+    }
+    
+    #searchBar {
+        width: 12em;
+        height: 0.8em;
+    }
+    
+    #searchButton {
+        height: 3.09em;
+    }
+
+    #map {
+        height: 30em;
+        width: 62em;
+        margin-left: 0em;
+        margin-right: 0em;
+    }
+
+    #content {
+        flex-wrap: wrap;
+    }
+
+    h2 {
+        width: 51em;
+    }
+
+    #general-info, #weather, #currency {
+        width: 51em;
+        line-height: 2em;
+    }
+
+    #currencyDiv {
+        width: 50em;
+    }
+
+    #cityStats {
+        margin-top: 3em;
+    }
+    
+    #currency table {
+        margin-top: 1em;
+        height: 12em;
+        width: 50em;
+    }
+    
+    
+    #currency table input {
+        width: 14em;
+    }
+}
+
+@media only screen and (max-width: 1440px) {
+    html {
+        margin-bottom: 5%;
+        margin-left: 10%;
+        margin-right: 10%;
+        width: 82em;
+    }
+
+    #map {
+        width: 97em;
+    }
+
+    #currencyDiv {
+        width: 60em;
+    }
+}
