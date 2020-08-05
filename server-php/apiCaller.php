@@ -10,17 +10,17 @@ if (!isset($_POST['lang'])) {
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/GeocodeClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/GeonamesClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/OpenWeatherClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/OpenExchangeRatesClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/WikipediaClient.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/GeocodeClient.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/GeonamesClient.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/OpenWeatherClient.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/OpenExchangeRatesClient.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/WikipediaClient.php');
 
 
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/database/Database.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/database/WeatherService.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/database/CountryService.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/gazetteer/server-php/database/CityService.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/database/Database.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/database/WeatherService.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/database/CountryService.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/server-php/database/CityService.php');
 
 $responseJson = [];
 
