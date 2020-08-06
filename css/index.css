@@ -7,6 +7,14 @@ html {
     background-color: #F7F7F7;
 }
 
+footer {
+    background-color: #F7F7F7;
+}
+
+.container {
+    background-color: #F7F7F7;
+}
+
 #loading {
     background: url('../images/spinner.gif') no-repeat center center;
     position: absolute;
@@ -18,17 +26,18 @@ html {
 }
 
 /*nav section*/
+
 nav {
-    height: 5em;
+    background-color: #333;
 }
 
 #searchBar {
-    height: 0.9em;
+    height: 0em;
+    border-radius: 10px;
+    background-color: white;
+    color: gray;
 }
 
-#searchButton {
-    height: 3.09em;
-}
 
 #searchIcon {
     height: 3em;
@@ -37,16 +46,17 @@ nav {
 }
 
 ul {
+    display: flex;
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: #333;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 li {
-    float: left;
-    display: block;
     color: white;
     text-align: center;
     padding: 14px 16px;
@@ -74,28 +84,40 @@ nav input {
 /*map section*/
 #map {
     height: 40em;
-    width: 120em;
+    width: 100%;
     margin: 0 auto;
 }
 
 /*general info section */
+#cityNameSection {
+    display: flex;
+    flex-direction: column;
+}
+
 #cityNameTitle {
+    margin-top: 1em;
     font-size: 2em;
     font-weight: bold;
 }
 
 h2 {
-    font-size: 1em;
+    font-size: 1.2em;
 }
 
 #content {
     display:flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 
-#general-info, #weather, #currency {
-    width: 90em;
+#general-info, #weather {
+    width: 70%;
     line-height: 2em;
+}
+
+#currency {
+    width: 50%;
 }
 
 #cityStats {
@@ -104,6 +126,8 @@ h2 {
  padding: 0.7em;
  margin-left: 1em;
  height: 13em;
+ min-width: 11em;
+ margin-top: 2em;
 }
 
 #cityStats th {
@@ -166,10 +190,11 @@ h2 {
 /*currency section  */
 #currencyDiv {
     background-color: #f0f0f0;
-    width: 60%;
-    height: 100%;
+    width: 100%;
+    height: 90%;
     border: solid gray thin;
     margin-top: 2em;
+    margin-bottom: 2em;
 }
 
 #currency table {
@@ -183,7 +208,7 @@ h2 {
 }
 
 #currency table td {
-    width: 25em;
+    width: 50%;
 }
 
 #currency table thead {
@@ -193,216 +218,70 @@ h2 {
 }
 
 #currency table input {
-    width: 15em;
+    width: 80%;
     font-size: 1.4em;
     color: #ff9000;
 }
 
 /*mobile screen css*/
-@media only screen and (max-width: 320px) {
-    html {
-        margin-bottom: 1%;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
-        width: 35em;
-    }
-
-    nav {
-        height: 4em;
-    }
-    
-    #searchBar {
-        width: 6em;
-        height: 0.8em;
-    }
-    
-    #searchButton {
-        height: 3.09em;
-    }
-
-    #map {
-        height: 30em;
-        width: 30em;
-        margin-left: 0em;
-        margin-right: 0em;
-    }
-
-    #content {
-        flex-wrap: wrap;
-    }
-
-    h2 {
-        width: 30em;
-    }
-
-    #general-info, #weather, #currency {
-        width: 27em;
-        line-height: 1.5em;
-    }
-
-    #currencyDiv {
-        width: 100%;
-    }
-
-    #cityStats {
-        margin-top: 3em;
-    }
-    
-    #currency table {
-        margin-top: 1em;
-        height: 12em;
-    }
-    
-    #currency table td {
-        width: 25em;
-    }
-    
-    
-    #currency table input {
-        width: 8em;
-    }
-    
-}
-
 @media only screen and (max-width: 425px) {
     html {
-        margin-bottom: 1%;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
-        width: 35em;
-    }
-
-    nav {
-        height: 4em;
-    }
-    
-    #searchBar {
-        width: 6em;
-        height: 0.8em;
-    }
-    
-    #searchButton {
-        height: 3.09em;
-    }
-
-    #map {
-        height: 30em;
-        width: 41em;
-        margin-left: 0em;
-        margin-right: 0em;
+        margin-bottom: 5%;
+        margin-left: 0%;
+        margin-right: 0%;
     }
 
     #content {
-        flex-wrap: wrap;
+        margin-left: 1%;
+        margin-right: 1%;
     }
 
-    h2 {
-        width: 33em;
+    #map {
+        height: 25em;
+    }
+    #cityNameSection {
+        margin-left: 1%;
+        margin-right: 1%;
     }
 
-    #general-info, #weather, #currency {
-        width: 33em;
-        line-height: 1.5em;
-    }
-
-    #currencyDiv {
+    #general-info, #weather {
         width: 100%;
     }
 
-    #cityStats {
-        margin-top: 3em;
+    #currency {
+        width: 90%;
     }
-    
-    #currency table {
-        margin-top: 1em;
-        height: 12em;
-        width: 30em;
-    }
-    
-    #currency table td {
-        width: 25em;
-    }
-    
-    
-    #currency table input {
-        width: 8em;
-    }
+
 }
 
-@media only screen and (max-width: 768px) {
+/*tablet */
+@media only screen and (max-width: 768px) and (min-width: 426px) {
     html {
         margin-bottom: 5%;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
-        width: 52em;
-    }
-
-    nav {
-        height: 4em;
-    }
-    
-    #searchBar {
-        width: 12em;
-        height: 0.8em;
-    }
-    
-    #searchButton {
-        height: 3.09em;
+        margin-left: 0%;
+        margin-right: 0%;
     }
 
     #map {
         height: 30em;
-        width: 62em;
-        margin-left: 0em;
-        margin-right: 0em;
     }
 
     #content {
-        flex-wrap: wrap;
+        margin-left: 1%;
+        margin-right: 1%;
     }
 
-    h2 {
-        width: 51em;
+    #cityNameSection {
+        margin-left: 1%;
+        margin-right: 1%;
     }
 
-    #general-info, #weather, #currency {
-        width: 51em;
-        line-height: 2em;
+    #general-info, #weather {
+        width: 100%;
     }
 
-    #currencyDiv {
-        width: 50em;
+    #currency {
+        width: 60%;
     }
-
-    #cityStats {
-        margin-top: 3em;
-    }
-    
-    #currency table {
-        margin-top: 1em;
-        height: 12em;
-        width: 50em;
-    }
-    
-    
-    #currency table input {
-        width: 14em;
-    }
-}
-
-@media only screen and (max-width: 1440px) {
-    html {
-        margin-bottom: 5%;
-        margin-left: 10%;
-        margin-right: 10%;
-        width: 82em;
-    }
-
-    #map {
-        width: 97em;
-    }
-
-    #currencyDiv {
-        width: 60em;
-    }
+   
 }
