@@ -44,8 +44,10 @@ CREATE TABLE IF NOT EXISTS `weather` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `city_id` int(11) DEFAULT NULL,
   `weather` varchar(50) DEFAULT NULL,
-  `temperature` float DEFAULT NULL COMMENT 'saved in kelvin',
+  `temp_max` float DEFAULT NULL COMMENT 'saved in kelvin',
+  `temp_min` float DEFAULT NULL COMMENT 'saved in kelvin',
   `date` date DEFAULT NULL,
+  `description` varchar(50) default null,
   PRIMARY KEY (`id`),
   KEY `FK_weather_city` (`city_id`),
   CONSTRAINT `FK_weather_city` FOREIGN KEY (`city_id`) REFERENCES `city` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

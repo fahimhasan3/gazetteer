@@ -7,6 +7,28 @@ let zoom = 11;
 var mymap;
 var marker;
 
+var currency_symbols = {
+	'BGN': 'лв', //Bulgariaan iev
+	'CHF': 'CHF', //Swiss franc
+	'CZK': 'Kč', //Czech koruna	
+	'DKK': 'kr', //Danish krone
+	'USD': '$', // US Dollar
+	'EUR': '€', // Euro
+	'CRC': '₡', // Costa Rican Colón
+	'GBP': '£', // British Pound Sterling
+	'ILS': '₪', // Israeli New Sheqel
+	'INR': '₹', // Indian Rupee
+	'JPY': '¥', // Japanese Yen
+	'KRW': '₩', // South Korean Won
+	'NGN': '₦', // Nigerian Naira
+	'PHP': '₱', // Philippine Peso
+	'PLN': 'zł', // Polish Zloty
+	'PYG': '₲', // Paraguayan Guarani
+	'THB': '฿', // Thai Baht
+	'UAH': '₴', // Ukrainian Hryvnia
+	'VND': '₫', // Vietnamese Dong
+};
+
 function callApi() {
 	let searchValue = $('#searchBar').val();
 	if (searchValue) {
@@ -18,9 +40,15 @@ function callApi() {
 			jsonData = data;
 			updateLatitudeLongitude();
 			populateGeneralInfo();
-			populateWeather();
-			populateWeatherHistory();
+			clearweather();
+			if (jsonData.weatherError == false) {
+				populateWeather();
+				populateWeatherHistory();
+			} else {
+				showWeatherWarning();
+			}
 			populateCurrency();
+			populateCountryStats();
 
 			enableSearchButton();
 			hideLoader();
@@ -41,12 +69,15 @@ function enableSearchButton() {
 
 function showGeneralInfo() {
 	$('#general-info').show();
+	$('#cityStats').show();
 	$('#weather').hide();
 	$('#currency').hide();
+	$('#statistics').hide();
 
 	$('#showGeneralInfo').addClass('active');
 	$('#showWeather').removeClass('active');
 	$('#showCurrency').removeClass('active');
+	$('#showStats').removeClass('active');
 }
 
 function showWeather() {
@@ -54,9 +85,12 @@ function showWeather() {
 	$('#showGeneralInfo').removeClass('active');
 
 	$('#weather').show();
+	$('#cityStats').hide();
 	$('#showWeather').addClass('active');
 
 	$('#currency').hide();
+	$('#statistics').hide();
+	$('#showStats').removeClass('active');
 	$('#showCurrency').removeClass('active');
 }
 
@@ -64,31 +98,103 @@ function showCurrency() {
 	$('#general-info').hide();
 	$('#weather').hide();
 	$('#currency').show();
+	$('#statistics').hide();
+	$('#cityStats').hide();
 
 	$('#showGeneralInfo').removeClass('active');
 	$('#showWeather').removeClass('active');
+	$('#showStats').removeClass('active');
 	$('#showCurrency').addClass('active');
+}
+
+function showStats() {
+	$('#general-info').hide();
+	$('#weather').hide();
+	$('#currency').hide();
+	$('#statistics').show();
+	$('#cityStats').hide();
+
+	$('#showGeneralInfo').removeClass('active');
+	$('#showWeather').removeClass('active');
+	$('#showCurrency').removeClass('active');
+	$('#showStats').addClass('active');
 }
 
 function populateGeneralInfo() {
 	$('#stateDistrict').html("");
 	$('#state').html("");
 
-	$('#general-info').html(jsonData.wikiIntro);
+	$('#IntroWarning').hide();
+	if (jsonData.wikiIntro.length < 50) {
+		$('#IntroWarning').show();
+		$('#wikiIntro').hide();
+	} else {
+		$('#IntroWarning').hide();
+		$('#wikiIntro').html(jsonData.wikiIntro);
+		$('#wikiIntro').show();
+	}
+
 	$('#cityNameTitle').html(jsonData.geocode.city);
-	$('h2').html(jsonData.geocode.formatted);
+	$('#cityFormattedName').html(jsonData.geocode.formatted);
 
 	$('#stateDistrict').html(jsonData.geocode.state_district);
 	$('#stateName').html(jsonData.geocode.state);
 	$('#countryName').html(jsonData.geonames.geonames[0].countryName);
 	$('#continentName').html(jsonData.geonames.geonames[0].continentName);
 
+	$('#countryFlag').attr('src', 'images/flags/' + jsonData.geonames.geonames[0].countryName + '.png');
+
 	//currency
 	countryCurrencyCode = jsonData.geonames.geonames[0].currencyCode;
 	for (const [key, value] of Object.entries(jsonData.currencies)) {
 		if (key == countryCurrencyCode) {
-			$('#countryCurrency').html(key + ", " + value);
+			let currencySymbol = '';
+			if (currency_symbols[countryCurrencyCode] !== undefined) {
+				currencySymbol = currency_symbols[countryCurrencyCode];
+			}
+			$('#countryCurrency').html(key + ", " + value + ' ' + currencySymbol);
 		}
+	}
+}
+
+function populateCountryStats() {
+	if(jsonData.countryStats[0] !== null) {
+		$('#countryStatsName').html(jsonData.countryStats[0].name);
+		$('#countryStatsAlpha2Code').html(jsonData.countryStats[0].alpha2Code);
+		$('#countryStatsCapital').html(jsonData.countryStats[0].capital);
+		$('#countryStatsAlpha3Code').html(jsonData.countryStats[0].alpha3Code);
+		$('#countryStatsRegion').html(jsonData.countryStats[0].region);
+
+		let i;
+		if(jsonData.countryStats[0].languages != null) {
+			$('#countryStatsLanguages').html(jsonData.countryStats[0].languages[0].name);
+			for(i = 1; i < jsonData.countryStats[0].languages.length; i++) {
+				$('#countryStatsLanguages').append(', ' + jsonData.countryStats[0].languages[i].name);
+			}
+		}
+		
+		$('#countryStatsSubregion').html(jsonData.countryStats[0].subregion);
+		$('#countryStatsPopulation').html(jsonData.countryStats[0].population);
+		$('#countryStatsDemonym').html(jsonData.countryStats[0].demonym);
+		$('#countryStatsArea').html(jsonData.countryStats[0].area + ' km2');
+
+		if(jsonData.countryStats[0].currencies != null) {
+			$('#countryStatsCurrencies').html(jsonData.countryStats[0].currencies[0].name + ' ' + jsonData.countryStats[0].currencies[0].symbol);
+			for(i = 1; i < jsonData.countryStats[0].currencies.length; i++) {
+				$('#countryStatsCurrencies').append(', ' + jsonData.countryStats[0].currencies[i].name + ' ' + jsonData.countryStats[0].currencies[i].symbol);
+			}
+		}
+
+		if(jsonData.countryStats[0].callingCodes != null) {
+			$('#countryStatsCallingCodes').html('+' + jsonData.countryStats[0].callingCodes[0]);
+			for(i = 1; i < jsonData.countryStats[0].callingCodes.length; i++) {
+				$('#countryStatsCallingCodes').append(', +' + jsonData.countryStats[0].callingCodes[i]);
+			}
+		}
+
+		$('#countryStatsFlag').attr("src", jsonData.countryStats[0].flag);
+
+
 	}
 }
 
@@ -98,10 +204,33 @@ function updateLatitudeLongitude() {
 	updateMapCenter();
 }
 
+function showWeatherWarning() {
+	$('#weatherWarning').show();
+	$('#weatherTableContainer').hide();
+}
+
+function clearweather() {
+	$('#temperature').html('');
+	$('#weatherIcon').attr("src", '');
+	$("#weatherHistory tbody").empty();
+	$('#pressure').html();
+	$('#humidity').html();
+	$('#windSpeed').html();
+}
+
 function populateWeather() {
+	$('#showWeatherWarning').hide();
+	$('#weatherTableContainer').show();
+	let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+	let timeOptions = { timeStyle: 'short' };
+	let today = new Date();
+	let formattedDate = today.toLocaleDateString("en-US", options);
+	let formattedTime = today.toLocaleDateString("en-US", timeOptions);
+	$('#todayDate').html(formattedDate + ', ' + formattedTime);
+
 	let kelvinTemp = jsonData.weather.main.temp;
 	let celsiusTemp = kelvinTemp - 273.15;
-	$('#temperature').html(celsiusTemp.toFixed(2));
+	$('#temperature').html(celsiusTemp.toFixed(2) + ' C°');
 
 	let sky = jsonData.weather.weather[0].main;
 	console.log(sky);
@@ -113,22 +242,44 @@ function populateWeather() {
 			break;
 		case 'Clear': src = 'images/sunny.png';
 			break;
+		case 'Extreme': src = 'images/storm.png';
+			break;
+		case 'Snow': src = 'images/snowing.png';
+			break;
 		default:
 	}
 	$('#weatherIcon').attr("src", src);
 	$('#sky').html(jsonData.weather.weather[0].description);
+
+	$('#pressure').html(jsonData.weather.main.pressure + ' mb');
+	$('#humidity').html(jsonData.weather.main.humidity + '%');
+	let windSpeed = jsonData.weather.wind.speed * 2.23694;
+	$('#windSpeed').html(windSpeed.toFixed(2) + ' mph');
+
 }
 
 function populateWeatherHistory() {
-	$("#weatherHistory td").remove(); 
 
-
-	for(let i = jsonData.weatherHistory.length - 1; i >= 0; i--) {
+	for (let i = jsonData.weatherHistory.length - 1; i >= 0; i--) {
 		let today = formatDate(new Date);
-		if(today != jsonData.weatherHistory[i].date) {
-			let date = jsonData.weatherHistory[i].date;
-			let celsiusTemp = jsonData.weatherHistory[i].temperature - 273.15;
+		if (today != jsonData.weatherHistory[i].date) {
+			let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+			let dateString = jsonData.weatherHistory[i].date;
+			let date = new Date(dateString);
+			let formattedDate = date.toLocaleDateString("en-US", options);
+			let tempMax = '?';
+			if (jsonData.weatherHistory[i].temp_max != null) {
+				tempMax = (jsonData.weatherHistory[i].temp_max - 273.15).toFixed(2);
+			}
+			let tempMin = '?';
+			if (jsonData.weatherHistory[i].temp_min != null) {
+				tempMin = (jsonData.weatherHistory[i].temp_min - 273.15).toFixed(2);
+			}
 			let weather = jsonData.weatherHistory[i].weather;
+			let description = '';
+			if (jsonData.weatherHistory[i].description != null) {
+				description = jsonData.weatherHistory[i].description;
+			}
 			let src = '';
 			switch (weather) {
 				case 'Clouds': src = 'images/cloudy.png';
@@ -137,38 +288,53 @@ function populateWeatherHistory() {
 					break;
 				case 'Clear': src = 'images/sunny.png';
 					break;
+				case 'Extreme': src = 'images/storm.png';
+					break;
+				case 'Snow': src = 'images/snowing.png';
+					break;
 				default:
 			}
-	
-			$('#dateRow').append('<td class="temperatureRow">' + date + '</td>');
-			$('#weatherRow').append('<td class="temperatureRow">' + celsiusTemp.toFixed(2) + ' C° <img src="' + src + '" class="tableWeatherIcon" />');
-		}		
+			$('#weatherHistory tbody').append(`
+				<tr>
+					<td>` + formattedDate + `</td>
+					<td><img src="` + src + `" class='tableWeatherIcon' /></td>
+					<td>` + tempMax + `/` + tempMin + ` C°</td>
+					<td>` + description + `</td>
+				</tr>
+			`);
+		}
 	}
 }
 
 function formatDate(date) {
-    var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
+	var d = new Date(date),
+		month = '' + (d.getMonth() + 1),
+		day = '' + d.getDate(),
+		year = d.getFullYear();
 
-    if (month.length < 2) 
-        month = '0' + month;
-    if (day.length < 2) 
-        day = '0' + day;
+	if (month.length < 2)
+		month = '0' + month;
+	if (day.length < 2)
+		day = '0' + day;
 
-    return [year, month, day].join('-');
+	return [year, month, day].join('-');
 }
 
 function populateCurrency() {
 	let $baseCurrencyDatalist = $("#baseCurrencyDatalist");
-	if($baseCurrencyDatalist.is(':empty')) {
+	if ($baseCurrencyDatalist.is(':empty')) {
 		$('#baseCurrency').val('USD');
+		$('#baseCurrencySymbol').html(' $');
 		for (const [key, value] of Object.entries(jsonData.currencies)) {
-			let option = $("<option />").val(key).text(key + ", " + value);
+			let currencySymbol = '';
+			if (currency_symbols[key] !== undefined) {
+				currencySymbol = currency_symbols[key];
+			}
+			let option = $("<option />").val(key).text(key + ", " + value + ' ' + currencySymbol);
 			$baseCurrencyDatalist.append(option);
 			if (key == countryCurrencyCode) {
-				$('#countryCurrency2').html(key + ", " + value);
+				$('#countryCurrency2').html(key + ", " + value + ' ' + currencySymbol);
+				$('#countryCurrencySymbol').html(' ' + currencySymbol);
 			}
 		}
 	}
@@ -200,6 +366,12 @@ function updateBaseCurrencyAmount() {
 
 function updateExchangeRates() {
 	let newBaseCurrency = $('#baseCurrency').val();
+	let currencySymbol = '';
+	if (currency_symbols[newBaseCurrency] !== undefined) {
+		currencySymbol = currency_symbols[newBaseCurrency];
+	}
+	$('#baseCurrencySymbol').html(' ' + currencySymbol);
+
 	const found = Object.entries(jsonData.exchangeRates.rates)
 		.find(([key, value]) => key === newBaseCurrency);
 	let newBaseExchangeRate = found[1];
@@ -239,7 +411,7 @@ function showPosition(position) {
 function updateMapCenter() {
 	mymap.panTo(new L.LatLng(latitude, longitude));
 	var newLatLng = new L.LatLng(latitude, longitude);
-    marker.setLatLng(newLatLng); 
+	marker.setLatLng(newLatLng);
 }
 
 function initMap() {
@@ -257,14 +429,23 @@ function initMap() {
 }
 
 function hideLoader() {
-    $('#loading').hide();
+	$('#loading').hide();
 }
 
 function showLoader() {
 	$('#loading').show();
 }
 
+
+
 $(document).ready(function () {
+
+	$('#weather').hide();
+	$('#currency').hide();
+	$('#statistics').hide();
+	$('#weatherWarning').hide();
+	$('#IntroWarning').hide();
+	$('#countryStatsWarning').hide();
 
 	getPosition()
 		.then((position) => {
@@ -280,12 +461,12 @@ $(document).ready(function () {
 		enableSearchButton();
 	}, 60000);
 
-	$('#weather').hide();
-	$('#currency').hide();
+
 
 	$('#showGeneralInfo').click(showGeneralInfo);
 	$('#showWeather').click(showWeather);
 	$('#showCurrency').click(showCurrency);
+	$('#showStats').click(showStats);
 
 	$('#baseAmount').change(updateCurrencyAmount);
 	$('#currencyAmount').change(updateBaseCurrencyAmount);

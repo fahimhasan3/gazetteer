@@ -56,7 +56,9 @@ class GeocodeClient
 		$temp['geometry']['lat'] = $entry['geometry']['lat'];
 		$temp['geometry']['lng'] = $entry['geometry']['lng'];
 		$temp['countryCode'] = strtoupper($entry['components']['country_code']);
-		$temp['city'] = $entry['components']['city'];
+		if(isset($entry['components']['city'])) {
+			$temp['city'] = $entry['components']['city'];
+		}
 		if (isset($entry['components']['state_district'])) {
 			$temp['state_district'] = $entry['components']['state_district'];
 		} 
