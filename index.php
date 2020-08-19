@@ -57,7 +57,7 @@
             </section>
 
             <section id='statistics'>
-                <table class="table table-bordered" id='countryStatsTable'>
+                <table class="table table-bordered shadow" id='countryStatsTable'>
                     <tr>
                         <th>Flag</th>
                         <td colspan="3"><img src='' id='countryStatsFlag' alt='country flag' /></td>
@@ -107,7 +107,7 @@
             </section>
             <section id="weather">
                 <section id='weatherTableContainer'>
-                    <table id='weatherTable' class='table table-bordered'>
+                    <table id='weatherTable' class='table table-bordered shadow'>
                         <tr>
                             <td colspan="3" id='todayDate'>07 september 2020</td>
                         </tr>
@@ -136,7 +136,7 @@
 
                     </table>
                     <p>Past days weather</p>
-                    <table id='weatherHistory' class='table table-bordered'>
+                    <table id='weatherHistory' class='table table-bordered shadow'>
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -156,7 +156,7 @@
             </section>
             <section id="currency">
                 <div id='currencyDiv'>
-                    <table class='table'>
+                    <table class='table shadow'>
                         <thead>
                             <tr>
                                 <th>Base Currency</th>
