@@ -43,9 +43,7 @@ if(preg_match('~[0-9]~', $q) == 1) {
 	$capital = $responseJson['geonames']['geonames'][0]['capital'];
 	$geocodeResult = $geocodeClient->callGeocode($capital, $_POST['lang']);
 	$responseJson['geocode'] = $geocodeResult['results'];
-} else if($geonamesResult['results'] == null) {
-	echo 'error';
-}
+} 
 
 $cityName = $responseJson['geocode']['city'];
 
