@@ -156,7 +156,7 @@ function populateGeneralInfo() {
 	$('#continentName').html(jsonData.geonames.geonames[0].continentName);
 	$('#capital').html(jsonData.geonames.geonames[0].capital)
 
-	$('#countryFlag').attr('src', 'images/flags/' + jsonData.geonames.geonames[0].countryName.toLowerCase() + '.png');
+	$('#countryFlag').attr('src', jsonData.countryStats[0].flag);
 
 	//currency
 	countryCurrencyCode = jsonData.geonames.geonames[0].currencyCode;
