@@ -3,9 +3,10 @@ let jsonData = [];
 let countryCurrencyCode;
 let latitude = 0;
 let longitude = 0;
-let zoom = 11;
+let zoom = 6;
 var mymap;
 var marker;
+var countryNotFound = false;
 
 var currency_symbols = {
 	'BGN': 'лв', //Bulgariaan iev
@@ -38,17 +39,26 @@ function callApi() {
 			console.log(data);
 			let jsonString = JSON.stringify(data);
 			jsonData = data;
-			updateLatitudeLongitude();
-			populateGeneralInfo();
-			clearweather();
-			if (jsonData.weatherError == false) {
-				populateWeather();
-				populateWeatherHistory();
+			if (data.countryNotFound == false) {
+				countryNotFound = false;
+				updateLatitudeLongitude();
+				populateGeneralInfo();
+				clearweather();
+				if (jsonData.weatherError == false) {
+					populateWeather();
+					populateWeatherHistory();
+				} else {
+					showWeatherWarning();
+				}
+				populateCurrency();
+				populateCountryStats();
 			} else {
+				countryNotFound = true;
 				showWeatherWarning();
+				showIntroWarning();
+				showCountryStatsWarning();
 			}
-			populateCurrency();
-			populateCountryStats();
+
 
 			enableSearchButton();
 			hideLoader();
@@ -69,7 +79,9 @@ function enableSearchButton() {
 
 function showGeneralInfo() {
 	$('#general-info').show();
-	$('#cityStats').show();
+	if(countryNotFound == false) {
+		$('#cityStats').show();
+	}
 	$('#weather').hide();
 	$('#currency').hide();
 	$('#statistics').hide();
@@ -126,21 +138,23 @@ function populateGeneralInfo() {
 
 	$('#IntroWarning').hide();
 	if (jsonData.wikiIntro.length < 50) {
-		$('#IntroWarning').show();
-		$('#wikiIntro').hide();
+		showIntroWarning();
 	} else {
 		$('#IntroWarning').hide();
 		$('#wikiIntro').html(jsonData.wikiIntro);
 		$('#wikiIntro').show();
+		$('#cityStats').show();
+		$('#cityNameSection').show();
 	}
 
-	$('#cityNameTitle').html(jsonData.geocode.city);
-	$('#cityFormattedName').html(jsonData.geocode.formatted);
+	$('#countryNameTitle').html(jsonData.geonames.geonames[0].countryName);
+	$('#capitalNameFormatted').html(jsonData.geocode.formatted);
 
 	$('#stateDistrict').html(jsonData.geocode.state_district);
 	$('#stateName').html(jsonData.geocode.state);
 	$('#countryName').html(jsonData.geonames.geonames[0].countryName);
 	$('#continentName').html(jsonData.geonames.geonames[0].continentName);
+	$('#capital').html(jsonData.geonames.geonames[0].capital)
 
 	$('#countryFlag').attr('src', 'images/flags/' + jsonData.geonames.geonames[0].countryName.toLowerCase() + '.png');
 
@@ -158,7 +172,10 @@ function populateGeneralInfo() {
 }
 
 function populateCountryStats() {
-	if(jsonData.countryStats[0] !== null) {
+	if (jsonData.countryStats[0] !== null) {
+		$('#countryStatsWarning').hide();
+		$('#countryStatsTable').show();
+
 		$('#countryStatsName').html(jsonData.countryStats[0].name);
 		$('#countryStatsAlpha2Code').html(jsonData.countryStats[0].alpha2Code);
 		$('#countryStatsCapital').html(jsonData.countryStats[0].capital);
@@ -166,28 +183,28 @@ function populateCountryStats() {
 		$('#countryStatsRegion').html(jsonData.countryStats[0].region);
 
 		let i;
-		if(jsonData.countryStats[0].languages != null) {
+		if (jsonData.countryStats[0].languages != null) {
 			$('#countryStatsLanguages').html(jsonData.countryStats[0].languages[0].name);
-			for(i = 1; i < jsonData.countryStats[0].languages.length; i++) {
+			for (i = 1; i < jsonData.countryStats[0].languages.length; i++) {
 				$('#countryStatsLanguages').append(', ' + jsonData.countryStats[0].languages[i].name);
 			}
 		}
-		
+
 		$('#countryStatsSubregion').html(jsonData.countryStats[0].subregion);
 		$('#countryStatsPopulation').html(jsonData.countryStats[0].population);
 		$('#countryStatsDemonym').html(jsonData.countryStats[0].demonym);
 		$('#countryStatsArea').html(jsonData.countryStats[0].area + ' km2');
 
-		if(jsonData.countryStats[0].currencies != null) {
+		if (jsonData.countryStats[0].currencies != null) {
 			$('#countryStatsCurrencies').html(jsonData.countryStats[0].currencies[0].name + ' ' + jsonData.countryStats[0].currencies[0].symbol);
-			for(i = 1; i < jsonData.countryStats[0].currencies.length; i++) {
+			for (i = 1; i < jsonData.countryStats[0].currencies.length; i++) {
 				$('#countryStatsCurrencies').append(', ' + jsonData.countryStats[0].currencies[i].name + ' ' + jsonData.countryStats[0].currencies[i].symbol);
 			}
 		}
 
-		if(jsonData.countryStats[0].callingCodes != null) {
+		if (jsonData.countryStats[0].callingCodes != null) {
 			$('#countryStatsCallingCodes').html('+' + jsonData.countryStats[0].callingCodes[0]);
-			for(i = 1; i < jsonData.countryStats[0].callingCodes.length; i++) {
+			for (i = 1; i < jsonData.countryStats[0].callingCodes.length; i++) {
 				$('#countryStatsCallingCodes').append(', +' + jsonData.countryStats[0].callingCodes[i]);
 			}
 		}
@@ -195,6 +212,8 @@ function populateCountryStats() {
 		$('#countryStatsFlag').attr("src", jsonData.countryStats[0].flag);
 
 
+	} else {
+		showCountryStatsWarning();
 	}
 }
 
@@ -209,6 +228,18 @@ function showWeatherWarning() {
 	$('#weatherTableContainer').hide();
 }
 
+function showIntroWarning() {
+	$('#IntroWarning').show();
+	$('#wikiIntro').hide();
+	$('#cityStats').hide()
+	$('#cityNameSection').hide();
+}
+
+function showCountryStatsWarning() {
+	$('#countryStatsWarning').show();
+	$('#countryStatsTable').hide();
+}
+
 function clearweather() {
 	$('#temperature').html('');
 	$('#weatherIcon').attr("src", '');
@@ -219,7 +250,7 @@ function clearweather() {
 }
 
 function populateWeather() {
-	$('#showWeatherWarning').hide();
+	$('#weatherWarning').hide();
 	$('#weatherTableContainer').show();
 	let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 	let timeOptions = { timeStyle: 'short' };
@@ -245,6 +276,8 @@ function populateWeather() {
 		case 'Extreme': src = 'images/storm.png';
 			break;
 		case 'Snow': src = 'images/snowing.png';
+			break;
+		case 'Drizzle': src = 'images/drizzle.png';
 			break;
 		default:
 	}
@@ -292,6 +325,8 @@ function populateWeatherHistory() {
 					break;
 				case 'Snow': src = 'images/snowing.png';
 					break;
+				case 'Drizzle': src = 'images/drizzle.png';
+					break;
 				default:
 			}
 			$('#weatherHistory tbody').append(`
@@ -335,6 +370,20 @@ function populateCurrency() {
 			if (key == countryCurrencyCode) {
 				$('#countryCurrency2').html(key + ", " + value + ' ' + currencySymbol);
 				$('#countryCurrencySymbol').html(' ' + currencySymbol);
+			}
+		}
+	} else {
+		$('#baseCurrency').val('USD');
+		$('#baseCurrencySymbol').html(' $');
+		for (const [key, value] of Object.entries(jsonData.currencies)) {
+			let currencySymbol = '';
+			if (currency_symbols[key] !== undefined) {
+				currencySymbol = currency_symbols[key];
+			}
+			if (key == countryCurrencyCode) {
+				$('#countryCurrency2').html(key + ", " + value + ' ' + currencySymbol);
+				$('#countryCurrencySymbol').html(' ' + currencySymbol);
+				break;
 			}
 		}
 	}
@@ -446,6 +495,7 @@ $(document).ready(function () {
 	$('#weatherWarning').hide();
 	$('#IntroWarning').hide();
 	$('#countryStatsWarning').hide();
+
 
 	getPosition()
 		.then((position) => {

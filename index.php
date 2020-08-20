@@ -24,7 +24,7 @@
     <nav>
         <ul>
             <li>
-                <input type="text" name="searchbar" id="searchBar" class='form-control' placeholder="city, country" autocomplete="on" required />
+                <input type="text" name="searchbar" id="searchBar" class='form-control' placeholder="country" autocomplete="on" required />
             </li>
             <li>
                 <input type="submit" id="searchButton" name="searchButton" value="Search" class='btn btn-primary' />
@@ -41,8 +41,8 @@
     </div>
     <footer>
         <section id='cityNameSection'>
-            <h1 id='cityNameTitle'></h1>
-            <h2 id='cityFormattedName'></h2>
+            <h1 id='countryNameTitle'></h1>
+            <h2 id='capitalNameFormatted'></h2>
         </section>
 
         <section id="content">
@@ -186,6 +186,10 @@
                 <img id='countryFlag' src='' alt='country flag' />
                 <table>
                     <tr>
+                        <th>Capital</th>
+                        <td id='capital'></td>
+                    </tr>
+                    <tr>
                         <th>District</th>
                         <td id='stateDistrict'></td>
                     </tr>
@@ -201,6 +205,7 @@
                         <th>Continent</th>
                         <td id='continentName'></td>
                     </tr>
+
                     <tr>
                         <th>Currency</th>
                         <td id='countryCurrency'></td>

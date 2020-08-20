@@ -2,7 +2,7 @@
 
 class GeocodeClient
 {
-	public function callGeocode($q, $lang)
+	public function callGeocodeForCity($q, $lang)
 	{
 		$jsonObj = $this->makeCurlRequest($q, $lang);
 		$searchResult = $this->findCityFromJson($jsonObj);
@@ -12,7 +12,21 @@ class GeocodeClient
 			$q = $cityName . ', ' . $countryName;
 			$jsonObj = $this->makeCurlRequest($q, $lang);
 			$searchResult = $this->findCityFromJson($jsonObj);
-		} 
+		}
+		return $searchResult;
+	}
+
+	public function callGeocodeForCountry($q, $lang)
+	{
+		$jsonObj = $this->makeCurlRequest($q, $lang);
+		$searchResult = $this->findCountryFromJson($jsonObj);
+		if (!$searchResult['results'] && preg_match('~[0-9]~', $q) == 1) {
+			$cityName = $jsonObj['results'][0]['components']['city'];
+			$countryName = $jsonObj['results'][0]['components']['country'];
+			$q = $cityName . ', ' . $countryName;
+			$jsonObj = $this->makeCurlRequest($q, $lang);
+			$searchResult = $this->findCountryFromJson($jsonObj);
+		}
 		return $searchResult;
 	}
 
@@ -33,6 +47,19 @@ class GeocodeClient
 		return $jsonObj;
 	}
 
+	private function findCountryFromJson($jsonObj)
+	{
+		$searchResult = [];
+		$searchResult['results'] = [];
+		foreach ($jsonObj['results'] as $entry) {
+			if ($entry['components']['_category'] == 'place' && $entry['components']['_type'] == 'country') {
+				$searchResult['results'] = $this->createResponseArray($entry);
+				break;
+			}
+		}
+		return $searchResult;
+	}
+
 	private function findCityFromJson($jsonObj)
 	{
 		$searchResult = [];
@@ -46,7 +73,7 @@ class GeocodeClient
 		return $searchResult;
 	}
 
-	
+
 
 	private function createResponseArray($entry)
 	{
@@ -55,16 +82,19 @@ class GeocodeClient
 		$temp['formatted'] = $entry['formatted'];
 		$temp['geometry']['lat'] = $entry['geometry']['lat'];
 		$temp['geometry']['lng'] = $entry['geometry']['lng'];
-		$temp['countryCode'] = strtoupper($entry['components']['country_code']);
-		if(isset($entry['components']['city'])) {
-			$temp['city'] = $entry['components']['city'];
+		if (isset($entry['components']['country_code'])) {
+			$temp['countryCode'] = strtoupper($entry['components']['country_code']);
+
+			if (isset($entry['components']['city'])) {
+				$temp['city'] = $entry['components']['city'];
+			}
+			if (isset($entry['components']['state_district'])) {
+				$temp['state_district'] = $entry['components']['state_district'];
+			}
+			if (isset($entry['components']['state'])) {
+				$temp['state'] = $entry['components']['state'];
+			}
+			return $temp;
 		}
-		if (isset($entry['components']['state_district'])) {
-			$temp['state_district'] = $entry['components']['state_district'];
-		} 
-		 if (isset($entry['components']['state'])) {
-			$temp['state'] = $entry['components']['state'];
-		}
-		return $temp;
 	}
 }

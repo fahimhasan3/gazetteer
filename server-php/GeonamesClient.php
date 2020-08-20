@@ -15,6 +15,11 @@ class GeonamesClient
         $jsonObj = json_decode($json_result, true);
         return $jsonObj;
     }
+
+    public function getCountryCode($countryName) {
+        $username = "fahim3";
+        $url = 'http://api.geonames.org/countryCodeJSON?formatted=true&lat=47.03&lng=10.2&username=' . urlencode($username) . '&style=full';
+    }
 }
 
 ?>

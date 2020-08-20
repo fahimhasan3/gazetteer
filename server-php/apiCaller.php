@@ -28,101 +28,115 @@ $responseJson = [];
 //Geocode api call
 $geocodeClient = new GeocodeClient;
 $q = $_POST['q'];
-$geocodeResult = $geocodeClient->callGeocode($_POST['q'], $_POST['lang']);
+$geocodeResult;
+if (preg_match('~[0-9]~', $q) == 1) {
+	$geocodeResult = $geocodeClient->callGeocodeForCity($_POST['q'], $_POST['lang']);
+} else {
+	$geocodeResult = $geocodeClient->callGeocodeForCountry($_POST['q'], $_POST['lang']);
+}
+
 $responseJson['geocode'] = $geocodeResult['results'];
 
 
 //Geonames api call
-$countryCode = $geocodeResult['results']['countryCode'];
-$geonamesClient = new GeonamesClient;
-$geonamesResult = $geonamesClient->getCountryInfo($countryCode, $_POST['lang']);
-$responseJson['geonames'] = $geonamesResult;
+if (isset($geocodeResult['results']['countryCode'])) {
+	$responseJson['countryNotFound'] = false;
 
-if(preg_match('~[0-9]~', $q) == 1) {
+	$countryCode = $geocodeResult['results']['countryCode'];
+
+	$geonamesClient = new GeonamesClient;
+	$geonamesResult = $geonamesClient->getCountryInfo($countryCode, $_POST['lang']);
+	$responseJson['geonames'] = $geonamesResult;
+
+
 	//by default load country capital
 	$capital = $responseJson['geonames']['geonames'][0]['capital'];
-	$geocodeResult = $geocodeClient->callGeocode($capital, $_POST['lang']);
+	$geocodeResult = $geocodeClient->callGeocodeForCity($capital, $_POST['lang']);
 	$responseJson['geocode'] = $geocodeResult['results'];
-} 
-
-$cityName = $responseJson['geocode']['city'];
-
-//Country stats api call
-$restCountriesClient = new RestCountriesClient;
-$countryStatsResult = $restCountriesClient->getCountryStatsByCode($countryCode);
-$responseJson['countryStats'] = $countryStatsResult;
-
-//Wikipedia api call
-$wikipediaClient = new WikipediaClient;
-$wikiResult = $wikipediaClient->extractIntroHtml($cityName);
-$responseJson['wikiIntro'] = $wikiResult;
-
-//Weather api call
-$openWeatherClient = new OpenWeatherClient;
-$weatherResult = $openWeatherClient->getCurrentWeatherByCity($cityName, $countryCode);
-$weatherError = false;
-if($weatherResult['cod'] == '404') {
-	$weatherError = true;
-}
-
-$responseJson['weatherError'] = $weatherError;
-$responseJson['weather'] = $weatherResult;
-
-//Currency api call
-$exchangeRatesClient = new OpenExchangeRatesClient;
-$responseJson['exchangeRates'] = $exchangeRatesClient->getLatest();
-$responseJson['currencies'] = $exchangeRatesClient->getCurrencies();
 
 
-//Saving to Database
-$db = new Database;
-//Country
-$countryService = new CountryService($db);
-$result = $countryService->getByName($responseJson['geonames']['geonames'][0]['countryName']);
-$countryId;
-if(!$result) {
-	$countryName = $responseJson['geonames']['geonames'][0]['countryName'];
-	$continent = $responseJson['geonames']['geonames'][0]['continentName'];
-	$population = $responseJson['geonames']['geonames'][0]['population'];
-	$capital = $responseJson['geonames']['geonames'][0]['capital'];
-	$currency = $responseJson['geonames']['geonames'][0]['currencyCode'];
-	$countryId = $countryService->insertRow($countryName, $continent, $population, $capital, $currency);
-} else {
-	$countryId = $result['id'];
-}
+	$cityName = $responseJson['geocode']['city'];
 
-//City
-$cityName = $responseJson['geocode']['city'];
-$district = isset($responseJson['components']['state_district']) ? $responseJson['geocode']['state_district'] : "";
-$state = isset($responseJson['components']['state']) ? $responseJson['geocode']['state'] : "";
-$cityService = new CityService($db);
-$result = $cityService->getByNameAndCountry($cityName, $countryId);
-$cityId;
-if(!$result) {
-	$cityId = $cityService->insertRow($cityName, $countryId, $district, $state);
-} else {
-	$cityId = $result['id'];
-}
+	//Country stats api call
+	$restCountriesClient = new RestCountriesClient;
+	$countryStatsResult = $restCountriesClient->getCountryStatsByCode($countryCode);
+	$responseJson['countryStats'] = $countryStatsResult;
 
+	//Wikipedia api call
+	$wikipediaClient = new WikipediaClient;
+	$wikiResult = $wikipediaClient->extractIntroHtml($responseJson['geonames']['geonames'][0]['countryName']);
+	$responseJson['wikiIntro'] = $wikiResult;
 
-//Weather
-if(!$weatherError) {
-	$date = date('Y-m-d');
-	$weatherService = new WeatherService($db);
-	$result = $weatherService->getWeatherByCityAndDate($cityId, $date);
-	if(!$result) {
-		$weather = $responseJson['weather']['weather'][0]['main'];
-		$tempMax = $responseJson['weather']['main']['temp_max'];
-		$tempMin = $responseJson['weather']['main']['temp_min'];
-		$description = $responseJson['weather']['weather'][0]['description'];
-		$weatherService->insertRow($cityId, $weather, $tempMax, $tempMin, $date, $description);
+	//Weather api call
+	$openWeatherClient = new OpenWeatherClient;
+	$weatherResult = $openWeatherClient->getCurrentWeatherByCity($cityName, $countryCode);
+	$weatherError = false;
+	if ($weatherResult['cod'] == '404') {
+		$weatherError = true;
 	}
-	
-	//Last 7 days weather
-	$responseJson['weatherHistory'] = $weatherService->getLast6WeatherByCity($cityId);
+
+	$responseJson['weatherError'] = $weatherError;
+	$responseJson['weather'] = $weatherResult;
+
+	//Currency api call
+	$exchangeRatesClient = new OpenExchangeRatesClient;
+	$responseJson['exchangeRates'] = $exchangeRatesClient->getLatest();
+	$responseJson['currencies'] = $exchangeRatesClient->getCurrencies();
+
+
+	//Saving to Database
+	$db = new Database;
+	//Country
+	$countryService = new CountryService($db);
+	$result = $countryService->getByName($responseJson['geonames']['geonames'][0]['countryName']);
+	$countryId;
+	if (!$result) {
+		$countryName = $responseJson['geonames']['geonames'][0]['countryName'];
+		$continent = $responseJson['geonames']['geonames'][0]['continentName'];
+		$population = $responseJson['geonames']['geonames'][0]['population'];
+		$capital = $responseJson['geonames']['geonames'][0]['capital'];
+		$currency = $responseJson['geonames']['geonames'][0]['currencyCode'];
+		$countryId = $countryService->insertRow($countryName, $continent, $population, $capital, $currency);
+	} else {
+		$countryId = $result['id'];
+	}
+
+	//City
+	$cityName = $responseJson['geocode']['city'];
+	$district = isset($responseJson['components']['state_district']) ? $responseJson['geocode']['state_district'] : "";
+	$state = isset($responseJson['components']['state']) ? $responseJson['geocode']['state'] : "";
+	$cityService = new CityService($db);
+	$result = $cityService->getByNameAndCountry($cityName, $countryId);
+	$cityId;
+	if (!$result) {
+		$cityId = $cityService->insertRow($cityName, $countryId, $district, $state);
+	} else {
+		$cityId = $result['id'];
+	}
+
+
+	//Weather
+	if (!$weatherError) {
+		$date = date('Y-m-d');
+		$weatherService = new WeatherService($db);
+		$result = $weatherService->getWeatherByCityAndDate($cityId, $date);
+		if (!$result) {
+			$weather = $responseJson['weather']['weather'][0]['main'];
+			$tempMax = $responseJson['weather']['main']['temp_max'];
+			$tempMin = $responseJson['weather']['main']['temp_min'];
+			$description = $responseJson['weather']['weather'][0]['description'];
+			$weatherService->insertRow($cityId, $weather, $tempMax, $tempMin, $date, $description);
+		}
+
+		//Last 7 days weather
+		$responseJson['weatherHistory'] = $weatherService->getLast6WeatherByCity($cityId);
+	}
+} else {
+	$responseJson['countryNotFound'] = true;
 }
+
+
+
 
 header('Content-Type: application/json; charset=UTF-8');
 echo json_encode($responseJson, JSON_UNESCAPED_UNICODE);
-
-?>
