@@ -142,7 +142,7 @@ function populateGeneralInfo() {
 	$('#countryName').html(jsonData.geonames.geonames[0].countryName);
 	$('#continentName').html(jsonData.geonames.geonames[0].continentName);
 
-	$('#countryFlag').attr('src', 'images/flags/' + jsonData.geonames.geonames[0].countryName + '.png');
+	$('#countryFlag').attr('src', 'images/flags/' + strtolower(jsonData.geonames.geonames[0].countryName) + '.png');
 
 	//currency
 	countryCurrencyCode = jsonData.geonames.geonames[0].currencyCode;
