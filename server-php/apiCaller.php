@@ -1,5 +1,7 @@
 <?php
 
+ini_set('memory_limit', '528M');
+
 if (!isset($_POST['q'])) {
 	$_POST['q'] = 'Birmingham, England';
 }
