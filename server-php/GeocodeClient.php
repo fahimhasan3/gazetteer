@@ -65,7 +65,8 @@ class GeocodeClient
 		$searchResult = [];
 		$searchResult['results'] = [];
 		foreach ($jsonObj['results'] as $entry) {
-			if ($entry['components']['_category'] == 'place' && $entry['components']['_type'] == 'city') {
+			if ($entry['components']['_category'] == 'place' && 
+				($entry['components']['_type'] == 'city' || $entry['components']['_type'] == 'state_district')) {
 				$searchResult['results'] = $this->createResponseArray($entry);
 				break;
 			}

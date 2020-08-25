@@ -21,6 +21,7 @@ class OpenExchangeRatesClient
         // Convert to array 
         $jsonObj = json_decode($strJsonFileContents, true);
         return $jsonObj;
+        
     }
 
 }

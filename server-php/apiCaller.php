@@ -55,7 +55,16 @@ if (isset($geocodeResult['results']['countryCode'])) {
 	$responseJson['geocode'] = $geocodeResult['results'];
 
 
-	$cityName = $responseJson['geocode']['city'];
+	//Country borders
+	$strJsonFileContents = file_get_contents("countries.geojson");
+	$countriesGeojson = json_decode($strJsonFileContents, true);
+
+	foreach($countriesGeojson['features'] as $features) {
+		if($responseJson['geonames']['geonames'][0]['isoAlpha3'] == $features['properties']['ISO_A3']) {
+			$responseJson['borderGeometry'] = $features['geometry'];
+			break;
+		}
+	}
 
 	//Country stats api call
 	$restCountriesClient = new RestCountriesClient;
@@ -69,7 +78,7 @@ if (isset($geocodeResult['results']['countryCode'])) {
 
 	//Weather api call
 	$openWeatherClient = new OpenWeatherClient;
-	$weatherResult = $openWeatherClient->getCurrentWeatherByCity($cityName, $countryCode);
+	$weatherResult = $openWeatherClient->getCurrentWeatherByCity($capital, $countryCode);
 	$weatherError = false;
 	if ($weatherResult['cod'] == '404') {
 		$weatherError = true;
@@ -102,14 +111,13 @@ if (isset($geocodeResult['results']['countryCode'])) {
 	}
 
 	//City
-	$cityName = $responseJson['geocode']['city'];
 	$district = isset($responseJson['components']['state_district']) ? $responseJson['geocode']['state_district'] : "";
 	$state = isset($responseJson['components']['state']) ? $responseJson['geocode']['state'] : "";
 	$cityService = new CityService($db);
-	$result = $cityService->getByNameAndCountry($cityName, $countryId);
+	$result = $cityService->getByNameAndCountry($capital, $countryId);
 	$cityId;
 	if (!$result) {
-		$cityId = $cityService->insertRow($cityName, $countryId, $district, $state);
+		$cityId = $cityService->insertRow($capital, $countryId, $district, $state);
 	} else {
 		$cityId = $result['id'];
 	}
@@ -134,8 +142,6 @@ if (isset($geocodeResult['results']['countryCode'])) {
 } else {
 	$responseJson['countryNotFound'] = true;
 }
-
-
 
 
 header('Content-Type: application/json; charset=UTF-8');

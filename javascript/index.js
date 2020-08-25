@@ -30,8 +30,14 @@ var currency_symbols = {
 	'VND': '₫', // Vietnamese Dong
 };
 
+var currentCountryLayer;
+
 function callApi() {
 	let searchValue = $('#searchBar').val();
+	if (currentCountryLayer != null) {
+		mymap.removeLayer(currentCountryLayer);
+	}
+
 	if (searchValue) {
 		showLoader();
 		disableSearchButton();
@@ -52,6 +58,7 @@ function callApi() {
 				}
 				populateCurrency();
 				populateCountryStats();
+				displayBorders();
 			} else {
 				countryNotFound = true;
 				showWeatherWarning();
@@ -70,6 +77,12 @@ function callApi() {
 	}
 }
 
+function displayBorders() {
+	currentCountryLayer = L.geoJson(jsonData.borderGeometry);
+	currentCountryLayer.addTo(mymap);
+	mymap.fitBounds(currentCountryLayer.getBounds());
+}
+
 function disableSearchButton() {
 	$("#searchButton").prop('disabled', true);
 }
@@ -79,7 +92,7 @@ function enableSearchButton() {
 
 function showGeneralInfo() {
 	$('#general-info').show();
-	if(countryNotFound == false) {
+	if (countryNotFound == false) {
 		$('#cityStats').show();
 	}
 	$('#weather').hide();
@@ -279,6 +292,10 @@ function populateWeather() {
 			break;
 		case 'Drizzle': src = 'images/drizzle.png';
 			break;
+		case 'Mist': src = 'images/mist.png';
+			break;
+		case 'Haze': src = 'images/haze.png';
+			break;
 		default:
 	}
 	$('#weatherIcon').attr("src", src);
@@ -326,6 +343,10 @@ function populateWeatherHistory() {
 				case 'Snow': src = 'images/snowing.png';
 					break;
 				case 'Drizzle': src = 'images/drizzle.png';
+					break;
+				case 'Mist': src = 'images/mist.png';
+					break;
+				case 'Haze': src = 'images/haze.png';
 					break;
 				default:
 			}
@@ -475,6 +496,8 @@ function initMap() {
 		zoomOffset: -1,
 		accessToken: 'pk.eyJ1IjoiZmFoaW0zIiwiYSI6ImNrZDdnMmszbTBqdW4yeHNjd2c2MmVwMzIifQ.OjopazdBVPNFr8szxd_jcQ'
 	}).addTo(mymap);
+
+	/*L.geoJson(geoJson).addTo(mymap);*/
 }
 
 function hideLoader() {
@@ -484,8 +507,6 @@ function hideLoader() {
 function showLoader() {
 	$('#loading').show();
 }
-
-
 
 $(document).ready(function () {
 
@@ -505,7 +526,7 @@ $(document).ready(function () {
 			console.error(err.message);
 		});
 
-	$('#searchButton').click(callApi);
+	$('#searchBar').change(callApi);
 	setInterval(function () {
 		geocoderClickCounter = 0;
 		enableSearchButton();
