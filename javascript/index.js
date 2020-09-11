@@ -265,12 +265,10 @@ function clearweather() {
 function populateWeather() {
 	$('#weatherWarning').hide();
 	$('#weatherTableContainer').show();
-	let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-	let timeOptions = { timeStyle: 'short' };
+	let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZoneName: 'short' };
 	let today = new Date();
 	let formattedDate = today.toLocaleDateString("en-US", options);
-	let formattedTime = today.toLocaleDateString("en-US", timeOptions);
-	$('#todayDate').html(formattedDate + ', ' + formattedTime);
+	$('#todayDate').html(formattedDate);
 
 	let kelvinTemp = jsonData.weather.main.temp;
 	let celsiusTemp = kelvinTemp - 273.15;
