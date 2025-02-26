@@ -8,9 +8,10 @@
 
     $name = 'Leeds';
     $countryId = 1;
-    $district = 'example';
+    $district = 'West Yorkshire';
+    $state = 'England';
 
-    $newId = $cityService->insertRow($name, $countryId, $district);
+    $newId = $cityService->insertRow($name, $countryId, $district, $state);
     echo $newId . ' ';
 
 

@@ -6,7 +6,7 @@ class WeatherService
         $this->db = $db;
     }
 
-    public function insertRow($cityId, $weather, $tempMax,$tempMin, $date, $description)
+    public function insertRow($cityId, $weather, $tempMax, $tempMin, $date, $description)
     {
         $id = $this->db->query('INSERT INTO weather (city_id, weather, temp_max, temp_min, date, description) VALUES (?, ?, ?, ?, ?, ?)' , $cityId, $weather,
          $tempMax, $tempMin, $date, $description )->lastInsertID();

@@ -8,24 +8,22 @@
 
     $city_id = 1;
     $weather = 'Clear';
-    $temperature = 270.50;
+    $tempMax = 25;
+    $tempMin = 15;
     $date = date('Y-m-d');
+    $description = 'test description';
 
     $result = $weatherService->getWeatherByCityAndDate($city_id, $date);
     if(!$result) {
-        $newId = $weatherService->insertRow($city_id, $weather, $temperature, $date);
-        echo 'new weather id = ' . $newId . ' ';
+        $newId = $weatherService->insertRow($city_id, $weather, $tempMax, $tempMin, $date, $description);
+        echo 'new weather id = ' . $newId . " \n";
     } else {
-        echo 'existing record id = ' . $result['id'];
+        echo 'existing record id = ' . $result['id'] . "\n";
     }
 
-    
-
-
-
-    $results = $weatherService->getLast7WeatherByCity($city_id);
+    $results = $weatherService->getLast6WeatherByCity($city_id);
     foreach($results as $item) {
-        echo $item['temperature'] . ' ';
+        echo 'temp_max ' . $item['temp_max'];
     }
 
 ?>

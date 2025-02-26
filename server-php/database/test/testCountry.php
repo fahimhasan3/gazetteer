@@ -24,7 +24,7 @@
 
 
     $result = $countryService->getByName($name);
-    echo $result['name'] . $result['continent'];
+    echo $result['name'] . ' ' . $result['continent'];
     
 
 ?>

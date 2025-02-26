@@ -17,6 +17,7 @@ class Database {
 		if ($this->connection->connect_error) {
 			$this->error('Failed to connect to MySQL - ' . $this->connection->connect_error);
 		}
+		$charset = 'utf8';
 		$this->connection->set_charset($charset);
 	}
 
