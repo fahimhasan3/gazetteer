@@ -2,7 +2,8 @@
     include('../CountryService.php');
     include('../Database.php');
 
-    $db = new Database;
+    $config = require __DIR__ . '/../config.php';
+    $db = new Database($config);
     $countryService = new CountryService($db);
 
     $name = 'Italy';

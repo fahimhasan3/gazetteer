@@ -2,7 +2,8 @@
     include('../CityService.php');
     include('../Database.php');
 
-    $db = new Database;
+    $config = require __DIR__ . '/../config.php';
+    $db = new Database($config);
     $cityService = new CityService($db);
 
     $name = 'Leeds';

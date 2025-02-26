@@ -96,7 +96,8 @@ if (isset($geocodeResult['results']['countryCode'])) {
 
 
 	//Saving to Database
-	$db = new Database;
+	$config = require __DIR__ . '/database/config.php';
+	$db = new Database($config);
 	//Country
 	$countryService = new CountryService($db);
 	$result = $countryService->getByName($responseJson['geonames']['geonames'][0]['countryName']);

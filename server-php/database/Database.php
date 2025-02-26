@@ -7,8 +7,13 @@ class Database {
     protected $query_closed = TRUE;
 	public $query_count = 0;
 
-	public function __construct($dbhost = 'eporqep6b4b8ql12.chr7pe7iynqr.eu-west-1.rds.amazonaws.com', $dbuser = 'f2qwpa1h7fh1se9u', $dbpass = 'l67pgqc6df971axd', $dbname = 'r1x8s4wdb8vt7d1x', $charset = 'utf8') {
-		$this->connection = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+	public function __construct($config) {
+		$this->connection = new mysqli(
+            $config['dbhost'],
+            $config['dbuser'],
+            $config['dbpass'],
+            $config['dbname']
+        );
 		if ($this->connection->connect_error) {
 			$this->error('Failed to connect to MySQL - ' . $this->connection->connect_error);
 		}

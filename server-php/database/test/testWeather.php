@@ -2,7 +2,8 @@
     include('../WeatherService.php');
     include('../Database.php');
 
-    $db = new Database;
+    $config = require __DIR__ . '/../config.php';
+    $db = new Database($config);
     $weatherService = new WeatherService($db);
 
     $city_id = 1;
