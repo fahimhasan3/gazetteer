@@ -1,7 +1,8 @@
 <?php
     class WikipediaClient {
         public function extractIntroHtml($cityName) {
-            $url = 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=' . urlencode($cityName);
+            $url = 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=' 
+                . urlencode($cityName);
             $handle = curl_init($url);
         
             curl_setopt($handle, CURLOPT_HTTPHEADER, array('Content-Type: text/plain; charset=UTF-8'));
