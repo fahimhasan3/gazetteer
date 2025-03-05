@@ -2,6 +2,14 @@
 
 class GeocodeClient
 {
+	private $apiKey;
+
+    public function __construct()
+    {
+        $config = require __DIR__ . '/api-config.php';
+        $this->apiKey = $config['geocode_api_key'];
+    }
+
 	public function callGeocodeForCity($q, $lang)
 	{
 		$jsonObj = $this->makeCurlRequest($q, $lang);
@@ -32,8 +40,8 @@ class GeocodeClient
 
 	private function makeCurlRequest($q, $lang)
 	{
-		$geocodeApiKey = "0d7291d488994a31bd2bbc2605770c6b";
-		$url = 'https://api.opencagedata.com/geocode/v1/json?q=' . urlencode($q) . '&key=' . urlencode($geocodeApiKey) . '&language=' . urlencode($lang) . '&pretty=1';
+		$url = 'https://api.opencagedata.com/geocode/v1/json?q=' . urlencode($q) . '&key=' . urlencode($this->apiKey) 
+			. '&language=' . urlencode($lang) . '&pretty=1';
 
 		$handle = curl_init($url);
 

@@ -40,6 +40,7 @@ function callApi() {
 
 	if (searchValue) {
 		showLoader();
+		console.log('callApi searchValue: ' + searchValue);
 		disableSearchButton();
 		$.post('server-php/apiCaller.php', { q: searchValue, lang: "EN" }, function (data) {
 			console.log(data);
