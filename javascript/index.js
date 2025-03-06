@@ -493,7 +493,7 @@ function initMap() {
 		id: 'mapbox/streets-v11',
 		tileSize: 512,
 		zoomOffset: -1,
-		accessToken: 'pk.eyJ1IjoiZmFoaW0zIiwiYSI6ImNrZDdnMmszbTBqdW4yeHNjd2c2MmVwMzIifQ.OjopazdBVPNFr8szxd_jcQ'
+		accessToken: CONFIG.MAPBOX_ACCESS_TOKEN
 	}).addTo(mymap);
 
 	/*L.geoJson(geoJson).addTo(mymap);*/
