@@ -40,36 +40,41 @@ function callApi() {
 
 	if (searchValue) {
 		showLoader();
-		console.log('callApi searchValue: ' + searchValue);
 		disableSearchButton();
 		$.post('server-php/apiCaller.php', { q: searchValue, lang: "EN" }, function (data) {
-			console.log(data);
-			let jsonString = JSON.stringify(data);
-			jsonData = data;
-			if (data.countryNotFound == false) {
-				countryNotFound = false;
-				updateLatitudeLongitude();
-				populateGeneralInfo();
-				clearweather();
-				if (jsonData.weatherError == false) {
-					populateWeather();
-					populateWeatherHistory();
+			try {
+				let jsonString = JSON.stringify(data);
+				jsonData = data;
+				if (data.countryNotFound == false) {
+					countryNotFound = false;
+					updateLatitudeLongitude();
+					populateGeneralInfo();
+					clearweather();
+					if (jsonData.weatherError == false) {
+						populateWeather();
+						populateWeatherHistory();
+					} else {
+						showWeatherWarning();
+					}
+					populateCurrency();
+					populateCountryStats();
+					displayBorders();
 				} else {
+					countryNotFound = true;
 					showWeatherWarning();
+					showIntroWarning();
+					showCountryStatsWarning();
 				}
-				populateCurrency();
-				populateCountryStats();
-				displayBorders();
-			} else {
-				countryNotFound = true;
-				showWeatherWarning();
-				showIntroWarning();
-				showCountryStatsWarning();
+	
+	
+				enableSearchButton();
+				console.log('hiding loader...');
+				hideLoader();
+			} catch (error) {
+				console.error('Error reading data:', error);
+				return;
 			}
-
-
-			enableSearchButton();
-			hideLoader();
+			
 		});
 		geocoderClickCounter++;
 		if (geocoderClickCounter >= 5) {
@@ -170,7 +175,9 @@ function populateGeneralInfo() {
 	$('#continentName').html(jsonData.geonames.geonames[0].continentName);
 	$('#capital').html(jsonData.geonames.geonames[0].capital)
 
-	$('#countryFlag').attr('src', jsonData.countryStats[0].flag);
+	if (jsonData.countryStats[0].flags && jsonData.countryStats[0].flags.svg) {
+		$('#countryFlag').attr("src", jsonData.countryStats[0].flags.svg);
+	}
 
 	//currency
 	countryCurrencyCode = jsonData.geonames.geonames[0].currencyCode;
@@ -186,48 +193,66 @@ function populateGeneralInfo() {
 }
 
 function populateCountryStats() {
-	if (jsonData.countryStats[0] !== null) {
-		$('#countryStatsWarning').hide();
-		$('#countryStatsTable').show();
-
-		$('#countryStatsName').html(jsonData.countryStats[0].name);
-		$('#countryStatsAlpha2Code').html(jsonData.countryStats[0].alpha2Code);
-		$('#countryStatsCapital').html(jsonData.countryStats[0].capital);
-		$('#countryStatsAlpha3Code').html(jsonData.countryStats[0].alpha3Code);
-		$('#countryStatsRegion').html(jsonData.countryStats[0].region);
-
-		let i;
-		if (jsonData.countryStats[0].languages != null) {
-			$('#countryStatsLanguages').html(jsonData.countryStats[0].languages[0].name);
-			for (i = 1; i < jsonData.countryStats[0].languages.length; i++) {
-				$('#countryStatsLanguages').append(', ' + jsonData.countryStats[0].languages[i].name);
-			}
-		}
-
-		$('#countryStatsSubregion').html(jsonData.countryStats[0].subregion);
-		$('#countryStatsPopulation').html(jsonData.countryStats[0].population);
-		$('#countryStatsDemonym').html(jsonData.countryStats[0].demonym);
-		$('#countryStatsArea').html(jsonData.countryStats[0].area + ' km2');
-
-		if (jsonData.countryStats[0].currencies != null) {
-			$('#countryStatsCurrencies').html(jsonData.countryStats[0].currencies[0].name + ' ' + jsonData.countryStats[0].currencies[0].symbol);
-			for (i = 1; i < jsonData.countryStats[0].currencies.length; i++) {
-				$('#countryStatsCurrencies').append(', ' + jsonData.countryStats[0].currencies[i].name + ' ' + jsonData.countryStats[0].currencies[i].symbol);
-			}
-		}
-
-		if (jsonData.countryStats[0].callingCodes != null) {
-			$('#countryStatsCallingCodes').html('+' + jsonData.countryStats[0].callingCodes[0]);
-			for (i = 1; i < jsonData.countryStats[0].callingCodes.length; i++) {
-				$('#countryStatsCallingCodes').append(', +' + jsonData.countryStats[0].callingCodes[i]);
-			}
-		}
-
-		$('#countryStatsFlag').attr("src", jsonData.countryStats[0].flag);
-
-
-	} else {
+	if (!jsonData.countryStats || !Array.isArray(jsonData.countryStats) || jsonData.countryStats.length === 0) {
+        console.warn("No country stats available.");
 		showCountryStatsWarning();
+        return;
+    }
+
+	$('#countryStatsWarning').hide();
+	$('#countryStatsTable').show();
+
+	const country = jsonData.countryStats[0];
+	$('#countryStatsName').html(country.name);
+	$('#countryStatsAlpha2Code').html(country.alpha2Code);
+	$('#countryStatsCapital').html(country.capital);
+	$('#countryStatsAlpha3Code').html(country.alpha3Code);
+	$('#countryStatsRegion').html(country.region);
+
+	if (country.languages && typeof country.languages === "object") {
+        const languageArray = Object.values(country.languages);
+        if (languageArray.length > 0) {
+            $('#countryStatsLanguages').html(languageArray.join(', '));
+        } else {
+            $('#countryStatsLanguages').html("N/A");
+        }
+    } else {
+        $('#countryStatsLanguages').html("N/A");
+    }
+
+	$('#countryStatsSubregion').html(country.subregion);
+	$('#countryStatsPopulation').html(country.population);
+	$('#countryStatsDemonym').html(country.demonym);
+	$('#countryStatsArea').html(country.area + ' km2');
+
+	if (country.currencies && typeof country.currencies === "object") {
+		const currencyArray = Object.values(country.currencies);
+	
+		if (currencyArray.length > 0) {
+			$('#countryStatsCurrencies').html(currencyArray.map(currency => `${currency.name} ${currency.symbol}`).join(', '));
+		} else {
+			$('#countryStatsCurrencies').html("N/A");
+		}
+	} else {
+		$('#countryStatsCurrencies').html("N/A");
+	}
+
+	if (country.idd && country.idd.root && Array.isArray(country.idd.suffixes)) {
+		const root = country.idd.root;
+		const suffixes = country.idd.suffixes;
+
+		if (suffixes.length > 0) {
+			$('#countryStatsCallingCodes').html(suffixes.map(suffix => root + suffix).join(', '));
+		} else {
+			$('#countryStatsCallingCodes').html(root);
+		}
+	} else {
+		$('#countryStatsCallingCodes').html("N/A");
+	}
+
+
+	if (country.flags && country.flags.svg) {
+		$('#countryStatsFlag').attr("src", country.flags.svg);
 	}
 }
 
@@ -276,7 +301,6 @@ function populateWeather() {
 	$('#temperature').html(celsiusTemp.toFixed(2) + ' C°');
 
 	let sky = jsonData.weather.weather[0].main;
-	console.log(sky);
 	let src = '';
 	switch (sky) {
 		case 'Clouds': src = 'images/cloudy.png';
@@ -470,7 +494,6 @@ var getPosition = function (options) {
 function showPosition(position) {
 	latitude = position.coords.latitude;
 	longitude = position.coords.longitude;
-	console.log(latitude + ',' + longitude);
 	$('#searchBar').val(latitude + ',' + longitude);
 	initMap();
 	callApi();

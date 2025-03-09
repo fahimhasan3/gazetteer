@@ -2,8 +2,12 @@
 
 ini_set('memory_limit', '528M');
 
+// $_POST['q'] = '52.516565, -1.887031';
+// $_POST['q'] = 'United Kingdom';
+// $_POST['lang'] = 'EN';
+
 if (!isset($_POST['q'])) {
-	$_POST['q'] = 'Birmingham, England';
+	$_POST['q'] = 'United Kingdom';
 }
 if (!isset($_POST['lang'])) {
 	$_POST['lang'] = 'EN';
@@ -12,18 +16,18 @@ if (!isset($_POST['lang'])) {
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/GeocodeClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/GeonamesClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/OpenWeatherClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/OpenExchangeRatesClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/WikipediaClient.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/RestCountriesClient.php');
+include(__DIR__  . '/GeocodeClient.php');
+include(__DIR__  . '/GeonamesClient.php');
+include(__DIR__  . '/OpenWeatherClient.php');
+include(__DIR__  . '/OpenExchangeRatesClient.php');
+include(__DIR__  . '/WikipediaClient.php');
+include(__DIR__  . '/RestCountriesClient.php');
 
 
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/database/Database.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/database/WeatherService.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/database/CountryService.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/server-php/database/CityService.php');
+include(__DIR__  . '/database/Database.php');
+include(__DIR__  . '/database/WeatherService.php');
+include(__DIR__  . '/database/CountryService.php');
+include(__DIR__  . '/database/CityService.php');
 
 $responseJson = [];
 

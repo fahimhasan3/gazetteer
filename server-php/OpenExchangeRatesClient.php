@@ -11,7 +11,6 @@ class OpenExchangeRatesClient
 
     public function getLatest()
     {
-        echo 'api key ' . $this->apiKey . "\n";
         $url = 'https://openexchangerates.org/api/latest.json?app_id=' . urlencode($this->apiKey);
         $handle = curl_init($url);
 
