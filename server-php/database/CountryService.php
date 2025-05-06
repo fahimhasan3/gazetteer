@@ -14,7 +14,7 @@ class CountryService
 
     public function getByName($name)
     {
-        $result = $this->db->query("SELECT * FROM country WHERE name = ?", $name)->fetchArray();
+        $result = $this->db->query('SELECT * FROM country WHERE name = ?', $name)->fetchOne();
         return $result;
     }
 }

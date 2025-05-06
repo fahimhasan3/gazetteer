@@ -1,9 +1,9 @@
 <?php
     include('../CityService.php');
-    include('../Database.php');
+    include('../DatabaseConnection.php');
 
     $config = require __DIR__ . '/../config.php';
-    $db = new Database($config);
+    $db = DatabaseConnection::create($config);
     $cityService = new CityService($db);
 
     $name = 'Leeds';

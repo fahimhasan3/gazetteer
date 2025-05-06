@@ -24,7 +24,7 @@ include(__DIR__  . '/WikipediaClient.php');
 include(__DIR__  . '/RestCountriesClient.php');
 
 
-include(__DIR__  . '/database/Database.php');
+include(__DIR__  . '/database/DatabaseConnection.php');
 include(__DIR__  . '/database/WeatherService.php');
 include(__DIR__  . '/database/CountryService.php');
 include(__DIR__  . '/database/CityService.php');
@@ -101,7 +101,8 @@ if (isset($geocodeResult['results']['countryCode'])) {
 
 	//Saving to Database
 	$config = require __DIR__ . '/database/config.php';
-	$db = new Database($config);
+	$db = DatabaseConnection::create($config);
+
 	//Country
 	$countryService = new CountryService($db);
 	$result = $countryService->getByName($responseJson['geonames']['geonames'][0]['countryName']);

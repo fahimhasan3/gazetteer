@@ -1,9 +1,9 @@
 <?php
     include('../WeatherService.php');
-    include('../Database.php');
+    include('../DatabaseConnection.php');
 
     $config = require __DIR__ . '/../config.php';
-    $db = new Database($config);
+    $db = DatabaseConnection::create($config);
     $weatherService = new WeatherService($db);
 
     $city_id = 1;

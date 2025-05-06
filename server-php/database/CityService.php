@@ -14,7 +14,7 @@ class CityService
 
     public function getByNameAndCountry($cityName, $countryId)
     {
-        $result = $this->db->query("SELECT * FROM city WHERE name = ? and country_id = ?", $cityName, $countryId)->fetchArray();
+        $result = $this->db->query("SELECT * FROM city WHERE name = ? and country_id = ?", $cityName, $countryId)->fetchOne();
         return $result;
     }
 }

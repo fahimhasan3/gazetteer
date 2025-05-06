@@ -1,9 +1,9 @@
 <?php
     include('../CountryService.php');
-    include('../Database.php');
+    include('../DatabaseConnection.php');
 
     $config = require __DIR__ . '/../config.php';
-    $db = new Database($config);
+    $db = DatabaseConnection::create($config);
     $countryService = new CountryService($db);
 
     $name = 'Italy';
@@ -13,6 +13,7 @@
     $currency = 'EUR';
 
     $result = $countryService->getByName($name);
+    echo 'result ' . print_r($result);
     if(!$result) {
         $newId = $countryService->insertRow($name, $continent, $population, $capital, $currency);
         echo 'new country ' . $newId . ' ';

@@ -20,7 +20,7 @@ class WeatherService
     }
 
     public function getWeatherByCityAndDate($cityId, $date) {
-        $result = $this->db->query("SELECT * FROM weather WHERE city_id = ? and date = ?", $cityId, $date)->fetchArray();
+        $result = $this->db->query("SELECT * FROM weather WHERE city_id = ? and date = ?", $cityId, $date)->fetchOne();
         return $result;
     }
 }
