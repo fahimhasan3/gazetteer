@@ -1,2 +1,3 @@
-server-php/api-config.php
+server-php/api-config.local.php
+server-php/database/config.local.php
 javascript/config.js
