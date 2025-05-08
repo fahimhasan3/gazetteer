@@ -1,6 +1,6 @@
 <?php
 
-require_once 'DatabaseConnection.php';
+require_once(__DIR__ . "/DatabaseConnection.php");
 
 class PgSQLConnection extends DatabaseConnection {
     protected $query_result;

@@ -1,7 +1,7 @@
 <?php
 
-require_once 'MySQLConnection.php';
-require_once 'PgSQLConnection.php';
+require_once(__DIR__ . '/MySQLConnection.php');
+require_once(__DIR__ . '/PgSQLConnection.php');
 
 abstract class DatabaseConnection {
     protected $config;
